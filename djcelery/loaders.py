@@ -35,8 +35,11 @@ class DjangoLoader(BaseLoader):
         # any embedded celerybeat process forks.
         signals.beat_embedded_init.connect(self.close_database)
 
-    def now(self):
-        return now()
+    def now(self, utc=False):
+        if getattr(settings, "CELERY_ENABLE_UTC", False) or \
+                getattr(settings, "TIME_ZONE", None) == 'UTC':
+            return now(utc=True)
+        return now(utc=False)
 
     def read_configuration(self):
         """Load configuration from Django settings."""

@@ -50,9 +50,14 @@ try:
             value = timezone.make_naive(value, default_tz)
         return value
 
-    def now():
+    def now(utc=False):
         return timezone.localtime(timezone.now())
 
 except ImportError:
-    now = datetime.now
+
+    def now(utc=False):
+        if utc:
+            return datetime.utcnow()
+        return datetime.now()
+
     make_aware = make_naive = lambda x: x
